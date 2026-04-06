@@ -121,6 +121,9 @@ dependencies {
     // ---------------- Glassmorphism ----------------
     implementation("dev.chrisbanes.haze:haze-jetpack-compose:0.4.1")
 
+    // ---------------- Coil (Images / Videos) ----------------
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-gif:2.6.0")
 
     // ---------------- Testing ----------------
     testImplementation(libs.junit) // JUnit

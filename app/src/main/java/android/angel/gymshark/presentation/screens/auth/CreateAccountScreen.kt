@@ -44,31 +44,31 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.prototype.gymshark.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(
-    navController: NavController,
+fun CreateAccountSheet(
     viewModel: AuthViewModel,
     showScreen: Boolean,
     screenHeight: Dp,
 ) {
     val scope = rememberCoroutineScope()
+    var termsAndConds by remember { mutableStateOf<Boolean>(false) }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
+    var surname by remember { mutableStateOf("") }
+    var dob by remember { mutableStateOf("") }
 
     LaunchedEffect(showScreen) {
     }
 
     GlassSheet(
-        isVisible = viewModel.showLoginScreen,
-        sheetHeight = screenHeight,
-        onDismissRequest = {
-            viewModel.updateShowLoginScreen(false)
+        isVisible = viewModel.showCreateAccountScreen, sheetHeight = screenHeight, onDismissRequest = {
+            viewModel.updateShowCreateAccountScreen(false)
         }) {
 
         Column(
@@ -89,16 +89,80 @@ fun LoginScreen(
                 )
 
                 Text(
-                    text = "GYMSHARK LOGIN", style = AppTheme.typography.headlineSmall.copy(
+                    text = "GYMSHARK SIGNUP", style = AppTheme.typography.headlineSmall.copy(
                         AppTheme.systemColors.textPrimary, fontWeight = FontWeight.Bold
                     )
                 )
             }
 
             Text(
-                text = "Shop your styles, save top pics to your wishlist, track those orders & train with us.",
+                text = "One account, across all apps, just to make things a little easier",
                 textAlign = TextAlign.Center,
                 style = AppTheme.typography.bodyLarge.copy(AppTheme.systemColors.textSecondary)
+            )
+
+            InputField(
+                value = firstName,
+                onValueChange = { nameInput ->
+                    firstName = nameInput
+                },
+                label = "first name",
+                placeholder = "John",
+                trailingIcon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(end = 19.dp)
+                                .clickable { firstName = "" },
+                            painter = painterResource(id = R.drawable.cross),
+                            contentDescription = "Clear Name",
+                            tint = AppTheme.systemColors.textSecondary
+                        )
+                    }
+                },
+            )
+
+            InputField(
+                value = surname,
+                onValueChange = { nameInput ->
+                    surname = nameInput
+                },
+                label = "last name",
+                placeholder = "Smith",
+                trailingIcon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(end = 19.dp)
+                                .clickable { surname = "" },
+                            painter = painterResource(id = R.drawable.cross),
+                            contentDescription = "Clear Name",
+                            tint = AppTheme.systemColors.textSecondary
+                        )
+                    }
+                },
+            )
+
+            InputField(
+                value = dob,
+                onValueChange = { dobInput ->
+                    dob = dobInput
+                },
+                label = "date of birth",
+                placeholder = "01/01/1997",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                trailingIcon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(end = 19.dp)
+                                .clickable { dob = "" },
+                            painter = painterResource(id = R.drawable.cross),
+                            contentDescription = "Clear Name",
+                            tint = AppTheme.systemColors.textSecondary
+                        )
+                    }
+                },
             )
 
             InputField(
@@ -155,22 +219,60 @@ fun LoginScreen(
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             )
 
-            TextButton(onClick = {}) {
-                Text(
-                    text = "Forgot Password?", style = AppTheme.typography.bodyLarge.copy(
-                        AppTheme.primaryColors.primary, fontWeight = FontWeight.Bold
-                    ), textAlign = TextAlign.Center, textDecoration = TextDecoration.Underline
-
-                )
-            }
-
             CoreButton(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                title = "log in",
+                title = "create account",
                 onClick = {
-                    viewModel.updateShowLoginScreen(!viewModel.showLoginScreen)
-                    navController.navigate("dashboard")
+                    viewModel.updateShowCreateAccountScreen(!viewModel.showCreateAccountScreen)
                 })
+
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = AppTheme.primaryColors.primary,
+                            uncheckedColor = Color.White,
+                            checkmarkColor = Color.White
+                        ),
+                        checked = termsAndConds,
+                        onCheckedChange = { termsAndConds = !termsAndConds })
+
+                    val annotatedText = buildAnnotatedString {
+                        append("Tick here to receive emails about our products, apps, sales, exclusive content and more. See our ")
+
+                        pushStringAnnotation(tag = "PRIVACY", annotation = "privacy_policy")
+                        withStyle(
+                            style = SpanStyle(
+                                color = AppTheme.systemColors.textPrimary,
+                                fontWeight = FontWeight.Bold,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        ) {
+                            append("Privacy Policy")
+                        }
+                        pop()
+                    }
+
+                    ClickableText(
+                        text = annotatedText, style = AppTheme.typography.bodyLarge.copy(
+                            color = AppTheme.systemColors.textPrimary
+                        ), onClick = { offset ->
+                            val annotations = annotatedText.getStringAnnotations(
+                                tag = "PRIVACY", start = offset, end = offset
+                            )
+
+                            if (annotations.isNotEmpty()) {
+                            }
+                        })
+                }
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -178,7 +280,7 @@ fun LoginScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Don't have an account?",
+                    text = "Already have an account?",
                     style = AppTheme.typography.bodyLarge.copy(AppTheme.systemColors.textPrimary),
                     textAlign = TextAlign.Center
                 )
@@ -186,20 +288,19 @@ fun LoginScreen(
 
                 TextButton(onClick = {
                     scope.launch {
-                        viewModel.updateShowLoginScreen(!viewModel.showLoginScreen)
-                        delay(600)
                         viewModel.updateShowCreateAccountScreen(!viewModel.showCreateAccountScreen)
+                        delay(600)
+                        viewModel.updateShowLoginScreen(!viewModel.showLoginScreen)
                     }
                 }) {
                     Text(
-                        text = "Sign up", style = AppTheme.typography.bodyLarge.copy(
+                        text = "Log in", style = AppTheme.typography.bodyLarge.copy(
                             AppTheme.primaryColors.primary, fontWeight = FontWeight.Bold
                         ), textAlign = TextAlign.Center, textDecoration = TextDecoration.Underline
 
                     )
                 }
             }
-
         }
     }
 }

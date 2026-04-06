@@ -1,5 +1,6 @@
 package android.angel.gymshark.presentation.components
 
+import android.angel.gymshark.core.utils.LocalLoggedInHazeState
 import android.angel.gymshark.ui.theme.AppTheme
 import android.graphics.drawable.Icon
 import androidx.annotation.StringRes
@@ -27,6 +28,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeChild
 
 @Composable
 fun InputField(
@@ -36,10 +39,10 @@ fun InputField(
     label: String,
     placeholder: String,
     showStringPlaceholder: Boolean = false,
-    trailingIcon: @Composable () -> Unit,
-    fillColor: Color = AppTheme.systemColors.inputContainer,
+    trailingIcon: @Composable () -> Unit = {},
+    fillColor: Color = Color.White.copy(alpha = 0.25f),
     focusedTextColor: Color = AppTheme.systemColors.textPrimary,
-    unfocusedFillColor: Color = AppTheme.systemColors.unfocusedInputContainer,
+    unfocusedFillColor: Color = Color.White.copy(alpha = 0.1f),
     unfocusedTextColor: Color = AppTheme.systemColors.textSecondary,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     enabled: Boolean = true,
@@ -53,7 +56,7 @@ fun InputField(
     inputHeight: Dp = 56.dp,
     fontSize: TextUnit = 14.sp,
     numberInput: Boolean = false,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
 ) {
     val color = AppTheme.systemColors
     val primaryColors = AppTheme.primaryColors
@@ -99,38 +102,26 @@ fun InputField(
             if (showStringPlaceholder) {
                 Text(
                     text = placeholder,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = fontSize, color = color.textSecondary),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = fontSize, color = color.textPrimary.copy(0.4f)),
                 )
             } else {
                 Text(
                     text = placeholder,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = fontSize, color = color.textSecondary),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = fontSize, color = color.textPrimary.copy(0.4f)),
                 )
             }
 
         },
         singleLine = true,
-        shape = borderRadius,
+        shape =  RoundedCornerShape(16.dp),
         visualTransformation = visualTransformation,
         trailingIcon = trailingIcon,
         modifier = modifier
             .fillMaxWidth()
             .height(inputHeight)
-            .background(Color.Transparent)
-            .drawBehind {
-                if (showUnderline) {
-                    val strokeWidth = 2.dp.toPx()
-                    val y = size.height - strokeWidth / 2
-                    drawLine(
-                        brush = borderColor,
-                        start = Offset(0f, y),
-                        end = Offset(size.width, y),
-                        strokeWidth = strokeWidth
-                    )
-                }
-            },
+            .background(Color.Transparent),
         colors = TextFieldDefaults.colors(
-            focusedTextColor = color.textPrimary,
+            focusedTextColor = focusedTextColor,
             unfocusedTextColor = unfocusedTextColor,
             focusedIndicatorColor = fillColor,
             unfocusedIndicatorColor = unfocusedFillColor,

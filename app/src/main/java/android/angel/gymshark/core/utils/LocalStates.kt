@@ -10,6 +10,10 @@ val LocalHazeState = staticCompositionLocalOf<HazeState> {
     HazeState()
 }
 
+val LocalLoggedInHazeState = staticCompositionLocalOf<HazeState> {
+    HazeState()
+}
+
 val ScaffoldPadding = staticCompositionLocalOf<PaddingValues> {
     PaddingValues(
         top = 56.dp,

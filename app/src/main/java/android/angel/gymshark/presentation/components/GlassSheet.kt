@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -53,6 +54,13 @@ fun GlassSheet(
             Color.White.copy(alpha = 0.25f),
             Color.White.copy(alpha = 0.10f),
             Color.White.copy(alpha = 0.05f)
+        )
+    )
+
+    val border: Brush = Brush.linearGradient(
+        colors = listOf(
+            Color.White.copy(alpha = 0.1f),
+            Color.White.copy(alpha = 0.4f)
         )
     )
 

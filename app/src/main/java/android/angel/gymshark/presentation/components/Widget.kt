@@ -1,6 +1,7 @@
 package android.angel.gymshark.presentation.components
 
 import android.angel.gymshark.core.utils.LocalHazeState
+import android.angel.gymshark.core.utils.LocalLoggedInHazeState
 import android.angel.gymshark.ui.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +24,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -38,11 +41,12 @@ fun Widget(
 ) {
 
     val isDarkMode = isSystemInDarkTheme()
-    val hazeState = LocalHazeState.current
+    val hazeState = LocalLoggedInHazeState.current
 
     val backgroundBrush: Brush = Brush.linearGradient(
         colors = listOf(
-            Color.White.copy(alpha = 0.1f),
+            Color.White.copy(alpha = 0.25f),
+            Color.White.copy(alpha = 0.10f),
             Color.White.copy(alpha = 0.05f)
         )
     )
@@ -117,7 +121,7 @@ fun Widget(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                         text = title,
                         textAlign = TextAlign.Center,
-                        style = AppTheme.typography.titleMedium.copy(color = AppTheme.systemColors.textPrimary)
+                        style = AppTheme.typography.titleMedium.copy(color = AppTheme.systemColors.textPrimary, fontWeight = FontWeight.Bold)
                     )
                 }
 
@@ -126,7 +130,7 @@ fun Widget(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                         text = caption,
                         textAlign = TextAlign.Center,
-                        style = AppTheme.typography.titleSmall.copy(color = AppTheme.systemColors.textSecondary)
+                        style = AppTheme.typography.titleSmall.copy(color = AppTheme.systemColors.textSecondary, fontStyle = FontStyle.Italic)
                     )
                 }
             }

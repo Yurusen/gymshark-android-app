@@ -1,15 +1,23 @@
 package android.angel.gymshark.presentation.components
 
+import android.angel.gymshark.core.utils.LocalEdgeToEdgePadding
 import android.angel.gymshark.core.utils.LocalHazeState
+import android.angel.gymshark.core.utils.LocalScreenHeight
+import android.angel.gymshark.ui.theme.AppTheme
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clipScrollableContainer
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -28,7 +36,6 @@ fun UiContent(
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val hazeState = LocalHazeState.current
 
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing),
@@ -37,6 +44,7 @@ fun UiContent(
         },
         indicator = { state, refreshTrigger ->
             SwipeRefreshIndicator(
+                contentColor = AppTheme.primaryColors.primary,
                 state = state,
                 refreshTriggerDistance = refreshTrigger,
                 scale = true
@@ -44,34 +52,15 @@ fun UiContent(
         }) {
 
         Scaffold(
+            containerColor = Color.Transparent,
             content = { padding ->
-
-//                Image(
-//                    painter = painterResource(id = R.drawable.gym),
-//                    contentDescription = null,
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .alpha(0.7f)
-//                        .haze(
-//                            hazeState,
-//                            backgroundColor = Color.Transparent,
-//                            blurRadius = 8.dp
-//                        )
-//                )
-
-                Box(modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .fillMaxSize()) {
-
-                    content()
-
+                Box(
+                    modifier = Modifier
+                        .background(color = Color.Transparent)
+                ) {
+                        content()
                 }
-
             }
-
         )
-
     }
-
 }
