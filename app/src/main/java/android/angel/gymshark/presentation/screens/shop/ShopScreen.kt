@@ -15,6 +15,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -124,18 +125,26 @@ fun ShopScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(50.dp)
                             .background(brush = LocalGlassBackground)
                             .hazeChild(LocalLoggedInHazeState.current),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        TextButton(
-                            modifier = Modifier.padding(vertical = 8.dp), onClick = {
-                                selectedGender = "WOMENS"
-                                selectedGenderIndex.value = 1
-                                selectedGenderCardIndex.value = 0
-                            }) {
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+                                    selectedGender = "WOMENS"
+                                    selectedGenderCardIndex.value = 0
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(
+                                modifier = Modifier.fillMaxWidth(),
                                 text = "WOMENS",
                                 textAlign = TextAlign.Center,
                                 style = AppTheme.typography.bodyLarge.copy(
@@ -145,13 +154,20 @@ fun ShopScreen(
                             )
                         }
 
-                        TextButton(
-                            modifier = Modifier.padding(vertical = 8.dp), onClick = {
-                                selectedGender = "MENS"
-                                selectedGenderIndex.value = 3
-                                selectedGenderCardIndex.value = 1
-                            }) {
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+                                    selectedGender = "MENS"
+                                    selectedGenderCardIndex.value = 1
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(
+                                modifier = Modifier.fillMaxWidth(),
                                 text = "MENS",
                                 textAlign = TextAlign.Center,
                                 style = AppTheme.typography.bodyLarge.copy(
@@ -164,11 +180,11 @@ fun ShopScreen(
                     Row(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        repeat(5) { index ->
+                        repeat(2) { index ->
                             Divider(
                                 modifier = Modifier.weight(1f),
                                 thickness = 1.dp,
-                                color = if (selectedGenderIndex.value == index) AppTheme.systemColors.textPrimary else AppTheme.systemColors.textSecondary
+                                color = if (selectedGenderCardIndex.value == index) AppTheme.systemColors.textPrimary else AppTheme.systemColors.textSecondary
                             )
                         }
                     }
@@ -308,18 +324,23 @@ fun ShopScreen(
                                 )
 
                                 items.forEach { item ->
-                                    TextButton(
-                                        contentPadding = PaddingValues(
-                                            vertical = 6.dp,
-                                            horizontal = 8.dp
-                                        ),
-                                        onClick = {
-                                            selectedMenuItem = item
-                                            navController.navigate("shop/category?title=${selectedMenuItem}")
-                                        }
+
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable(interactionSource = remember { MutableInteractionSource() }) {
+                                                selectedMenuItem = item
+                                                navController.navigate("shop/category?title=${selectedMenuItem}")
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Row(
-                                            modifier = Modifier.fillMaxWidth(),
+                                            modifier = Modifier.padding(
+                                                vertical = 16.dp,
+                                                horizontal = 9.dp
+                                            )
+                                                .fillMaxWidth(),
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
@@ -330,18 +351,13 @@ fun ShopScreen(
                                                 )
                                             )
 
-                                            IconButton(onClick = {
-                                                selectedMenuItem = item
-                                                navController.navigate("shop/category?title=${item}")
-
-                                            }) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.caret_right),
-                                                    contentDescription = null,
-                                                    tint = if (selectedMenuItem == item) AppTheme.primaryColors.primary else AppTheme.systemColors.textSecondary
-                                                )
-                                            }
+                                            Icon(
+                                                painter = painterResource(R.drawable.caret_right),
+                                                contentDescription = null,
+                                                tint = if (selectedMenuItem == item) AppTheme.primaryColors.primary else AppTheme.systemColors.textSecondary
+                                            )
                                         }
+
                                     }
 
                                     Divider(

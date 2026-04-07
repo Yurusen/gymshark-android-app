@@ -54,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -213,6 +214,13 @@ fun DashboardScreen() {
                     Column(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
+                            .background(brush =
+                                Brush.verticalGradient(
+                                    listOf(
+                                        Color.Black.copy(alpha = 0f),
+                                        Color.Black.copy(alpha = 0.8f)
+                                    )
+                                ))
                             .padding(vertical = 8.dp, horizontal = 6.dp)
                     ) {
                         Text(
@@ -287,9 +295,6 @@ fun DashboardScreen() {
                                         .height(320.dp)
                                         .clickable(
                                             interactionSource = remember { MutableInteractionSource() },
-                                            indication = ripple(
-                                                bounded = true, radius = 160.dp
-                                            )
                                         ) {
 
                                         }) {
@@ -367,6 +372,13 @@ fun DashboardScreen() {
                     Column(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
+                            .background(brush =
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.Black.copy(alpha = 0f),
+                                    Color.Black.copy(alpha = 0.8f)
+                                )
+                            ))
                             .padding(vertical = 8.dp, horizontal = 6.dp)
                     ) {
                         Text(
@@ -431,9 +443,7 @@ fun DashboardScreen() {
                                 .fillMaxHeight()
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
-                                    indication = ripple(
-                                        bounded = true, radius = 150.dp
-                                    )
+
                                 ) {
 
                                 }
@@ -453,9 +463,7 @@ fun DashboardScreen() {
                                     .fillMaxWidth()
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
-                                        indication = ripple(
-                                            bounded = true, radius = 75.dp
-                                        )
+
                                     ) {
 
                                     }
@@ -470,9 +478,7 @@ fun DashboardScreen() {
                                     .fillMaxWidth()
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
-                                        indication = ripple(
-                                            bounded = true, radius = 75.dp
-                                        )
+
                                     ) {
 
                                     }
@@ -496,9 +502,7 @@ fun DashboardScreen() {
                                     .fillMaxHeight()
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
-                                        indication = ripple(
-                                            bounded = true, radius = 75.dp
-                                        )
+
                                     ) {
 
                                     }
