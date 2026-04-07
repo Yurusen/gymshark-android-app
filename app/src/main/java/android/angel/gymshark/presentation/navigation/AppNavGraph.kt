@@ -8,6 +8,9 @@ import android.angel.gymshark.data.local.datastore.DataStore
 import android.angel.gymshark.presentation.components.BottomNav
 import android.angel.gymshark.presentation.components.ImageSlideshow
 import android.angel.gymshark.ui.theme.AppTheme
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -45,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -76,13 +80,25 @@ fun AppNavGraph(dataStore: DataStore) {
     LaunchedEffect(isLoggedIn.value) {
         if (isLoggedIn.value == false) {
             navController.navigate("auth") {
-                popUpTo(DashboardRoutes.Dashboard.route) { inclusive = true }
+                popUpTo(BottomNav.Home.route) { inclusive = true }
             }
         }
     }
 
     val loggedInHazeState = remember { HazeState() }
 
+    val topBarTitle = when {
+        currentRoute?.startsWith("shop/category") == true -> {
+            navBackStackEntry?.arguments?.getString("title")
+        }
+
+        currentRoute == BottomNav.Home.route -> BottomNav.Home.title
+        currentRoute == BottomNav.Shop.route -> BottomNav.Shop.title
+        currentRoute == BottomNav.Basket.route -> BottomNav.Basket.title
+        currentRoute == BottomNav.WishList.route -> BottomNav.WishList.title
+        currentRoute == BottomNav.Profile.route -> BottomNav.Profile.title
+        else -> "Error"
+    }
     CompositionLocalProvider(
         LocalLoggedInHazeState provides loggedInHazeState
     ) {
@@ -94,7 +110,11 @@ fun AppNavGraph(dataStore: DataStore) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .haze(loggedInHazeState, backgroundColor = Color.Transparent, blurRadius = 3.5.dp)
+                    .haze(
+                        loggedInHazeState,
+                        backgroundColor = Color.Transparent,
+                        blurRadius = 3.5.dp
+                    )
             ) {
                 Image(
                     painter = painterResource(R.drawable.content_bg),
@@ -125,7 +145,15 @@ fun AppNavGraph(dataStore: DataStore) {
                 topBar = {
                     if (currentRoute !in authRoutes) {
                         TopAppBar(
-                            title = { Text(text = currentRoute ?: "Error") },
+                            title = {
+                                Text(
+                                    text = topBarTitle ?: "N/A",
+                                    style = AppTheme.typography.headlineSmall.copy(
+                                        AppTheme.systemColors.textPrimary,
+                                        fontWeight = FontWeight.ExtraBold
+                                    )
+                                )
+                            },
                             scrollBehavior = scrollBehaviour,
                             windowInsets = WindowInsets(0),
                             colors = TopAppBarDefaults.topAppBarColors(
@@ -198,7 +226,9 @@ fun AppNavGraph(dataStore: DataStore) {
                                 modifier = Modifier
                                     .background(color = Color.Transparent),
                                 navController = navController,
-                                startDestination = startDestination
+                                startDestination = startDestination,
+                                enterTransition = { fadeIn(animationSpec = tween(600)) },
+                                exitTransition = { fadeOut(animationSpec = tween(600)) }
                             ) {
 
 
@@ -213,6 +243,16 @@ fun AppNavGraph(dataStore: DataStore) {
                                 )
 
                                 dashboardNavGraph(
+                                    navController = navController,
+                                    dataStore = dataStore
+                                )
+
+                                shopNavGraph(
+                                    navController = navController,
+                                    dataStore = dataStore
+                                )
+
+                                basketNavGraph(
                                     navController = navController,
                                     dataStore = dataStore
                                 )

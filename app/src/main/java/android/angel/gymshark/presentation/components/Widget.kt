@@ -1,5 +1,7 @@
 package android.angel.gymshark.presentation.components
 
+import android.angel.gymshark.core.utils.LocalGlassBackground
+import android.angel.gymshark.core.utils.LocalGlassBorder
 import android.angel.gymshark.core.utils.LocalHazeState
 import android.angel.gymshark.core.utils.LocalLoggedInHazeState
 import android.angel.gymshark.ui.theme.AppTheme
@@ -37,111 +39,175 @@ fun Widget(
     height: Dp = 300.dp,
     title: String? = null,
     caption: String? = null,
-    content: @Composable () -> Unit,
+    hideBorders: Boolean = false,
+    verticalArrangement: Arrangement.Vertical = Arrangement.SpaceBetween,
+    content: @Composable () -> Unit
 ) {
 
     val isDarkMode = isSystemInDarkTheme()
     val hazeState = LocalLoggedInHazeState.current
 
-    val backgroundBrush: Brush = Brush.linearGradient(
-        colors = listOf(
-            Color.White.copy(alpha = 0.25f),
-            Color.White.copy(alpha = 0.10f),
-            Color.White.copy(alpha = 0.05f)
-        )
-    )
-
-    val border: Brush = Brush.linearGradient(
-        colors = listOf(
-            Color.White.copy(alpha = 0.1f),
-            Color.White.copy(alpha = 0.4f)
-        )
-    )
-
     Box(
-        modifier = modifier
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(8.dp),
-                clip = false
-            )
-            .hazeChild(
-                state = hazeState,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .background(
-                brush = backgroundBrush,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .border(
-                width = 1.dp,
-                brush = border,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .drawBehind {
-                if (isDarkMode) {
-                    val cornerRadius = 8.dp.toPx()
-                    val offsetX = 4.dp.toPx()
-                    val offsetY = 4.dp.toPx()
-                    val blurRadius = 24.dp.toPx()
+        modifier = Modifier
+            .height(height)
+            .then(
+                if (!hideBorders) {
+                    Modifier
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = RoundedCornerShape(8.dp),
+                            clip = false
+                        )
+                        .hazeChild(
+                            state = hazeState,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .background(
+                            brush = LocalGlassBackground,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .drawBehind {
+                            if (isDarkMode) {
+                                val cornerRadius = 8.dp.toPx()
+                                val offsetX = 4.dp.toPx()
+                                val offsetY = 4.dp.toPx()
+                                val blurRadius = 24.dp.toPx()
 
-                    val paint = Paint().asFrameworkPaint().apply {
-                        color = android.graphics.Color.BLACK
-                        alpha = (0.35f * 255).toInt()
-                        maskFilter = android.graphics.BlurMaskFilter(blurRadius, android.graphics.BlurMaskFilter.Blur.NORMAL)
-                    }
+                                val paint = Paint().asFrameworkPaint().apply {
+                                    color = android.graphics.Color.BLACK
+                                    alpha = (0.35f * 255).toInt()
+                                    maskFilter = android.graphics.BlurMaskFilter(
+                                        blurRadius,
+                                        android.graphics.BlurMaskFilter.Blur.NORMAL
+                                    )
+                                }
 
-                    drawContext.canvas.nativeCanvas.drawRoundRect(
-                        offsetX,
-                        offsetY,
-                        size.width + offsetX,
-                        size.height + offsetY,
-                        cornerRadius,
-                        cornerRadius,
-                        paint
-                    )
+                                drawContext.canvas.nativeCanvas.drawRoundRect(
+                                    offsetX,
+                                    offsetY,
+                                    size.width + offsetX,
+                                    size.height + offsetY,
+                                    cornerRadius,
+                                    cornerRadius,
+                                    paint
+                                )
+                            }
+                        }
+                        .border(
+                            width = 1.dp,
+                            brush = LocalGlassBorder,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                } else {
+                    Modifier
+                        .shadow(
+                            elevation = 8.dp,
+                            clip = false
+                        )
+                        .hazeChild(
+                            state = hazeState,
+                        )
+                        .background(
+                            brush = LocalGlassBackground,
+                        )
+                        .drawBehind {
+                            if (isDarkMode) {
+                                val cornerRadius = 0.dp.toPx()
+                                val offsetX = 4.dp.toPx()
+                                val offsetY = 4.dp.toPx()
+                                val blurRadius = 24.dp.toPx()
+
+                                val paint = Paint().asFrameworkPaint().apply {
+                                    color = android.graphics.Color.BLACK
+                                    alpha = (0.35f * 255).toInt()
+                                    maskFilter = android.graphics.BlurMaskFilter(
+                                        blurRadius,
+                                        android.graphics.BlurMaskFilter.Blur.NORMAL
+                                    )
+                                }
+
+                                drawContext.canvas.nativeCanvas.drawRoundRect(
+                                    offsetX,
+                                    offsetY,
+                                    size.width + offsetX,
+                                    size.height + offsetY,
+                                    cornerRadius,
+                                    cornerRadius,
+                                    paint
+                                )
+                            }
+                        }
                 }
-            }
-            .height(height),
+            )
+            .then(modifier),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(6.dp),
+            modifier = Modifier
+                .fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Column(
-                modifier = Modifier.fillMaxWidth().weight(0.15f),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (!title.isNullOrBlank()) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                        text = title,
-                        textAlign = TextAlign.Center,
-                        style = AppTheme.typography.titleMedium.copy(color = AppTheme.systemColors.textPrimary, fontWeight = FontWeight.Bold)
-                    )
+            if (!title.isNullOrBlank() || (!title.isNullOrBlank() && !caption.isNullOrBlank())) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.15f),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (!title.isNullOrBlank()) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp),
+                            text = title,
+                            textAlign = TextAlign.Center,
+                            style = AppTheme.typography.titleMedium.copy(
+                                color = AppTheme.systemColors.textPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
+
+                    if (!caption.isNullOrBlank()) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp),
+                            text = caption,
+                            textAlign = TextAlign.Center,
+                            style = AppTheme.typography.titleSmall.copy(
+                                color = AppTheme.systemColors.textSecondary,
+                                fontStyle = FontStyle.Italic
+                            )
+                        )
+                    }
                 }
 
-                if (!caption.isNullOrBlank()) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                        text = caption,
-                        textAlign = TextAlign.Center,
-                        style = AppTheme.typography.titleSmall.copy(color = AppTheme.systemColors.textSecondary, fontStyle = FontStyle.Italic)
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(if (!title.isNullOrBlank() && !caption.isNullOrBlank()) 0.85f else 1f),
+                    verticalArrangement = verticalArrangement,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    content()
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(if (!title.isNullOrBlank() && !caption.isNullOrBlank()) 0.85f else 1f),
+                    verticalArrangement = verticalArrangement,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    content()
                 }
             }
 
-            Column(
-                modifier = Modifier.fillMaxWidth().weight(if (!title.isNullOrBlank() && !caption.isNullOrBlank()) 0.85f else 1f),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                content()
-            }
         }
     }
 

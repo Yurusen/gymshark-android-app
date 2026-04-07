@@ -116,7 +116,7 @@ fun CreateAccountSheet(
                                 .clickable { firstName = "" },
                             painter = painterResource(id = R.drawable.cross),
                             contentDescription = "Clear Name",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                     }
                 },
@@ -137,7 +137,7 @@ fun CreateAccountSheet(
                                 .clickable { surname = "" },
                             painter = painterResource(id = R.drawable.cross),
                             contentDescription = "Clear Name",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                     }
                 },
@@ -159,7 +159,7 @@ fun CreateAccountSheet(
                                 .clickable { dob = "" },
                             painter = painterResource(id = R.drawable.cross),
                             contentDescription = "Clear Name",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                     }
                 },
@@ -180,7 +180,7 @@ fun CreateAccountSheet(
                                 .clickable { email = "" },
                             painter = painterResource(id = R.drawable.cross),
                             contentDescription = "Clear Password",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                     }
                 },
@@ -204,7 +204,7 @@ fun CreateAccountSheet(
                                 },
                             painter = painterResource(id = if (passwordVisible) R.drawable.password_visible else R.drawable.password),
                             contentDescription = "Show Password",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                         Icon(
                             modifier = Modifier
@@ -212,7 +212,7 @@ fun CreateAccountSheet(
                                 .clickable { password = "" },
                             painter = painterResource(id = R.drawable.cross),
                             contentDescription = "Clear Password",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                     }
                 },

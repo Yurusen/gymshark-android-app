@@ -40,10 +40,10 @@ fun InputField(
     placeholder: String,
     showStringPlaceholder: Boolean = false,
     trailingIcon: @Composable () -> Unit = {},
-    fillColor: Color = Color.White.copy(alpha = 0.25f),
+    fillColor: Color = Color.White.copy(alpha = 0.45f),
     focusedTextColor: Color = AppTheme.systemColors.textPrimary,
-    unfocusedFillColor: Color = Color.White.copy(alpha = 0.1f),
-    unfocusedTextColor: Color = AppTheme.systemColors.textSecondary,
+    unfocusedFillColor: Color = Color.White.copy(alpha = 0.3f),
+    unfocusedTextColor: Color = Color.White.copy(alpha = 0.4f),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     enabled: Boolean = true,
     borderRadius: RoundedCornerShape = RoundedCornerShape(
@@ -60,6 +60,7 @@ fun InputField(
 ) {
     val color = AppTheme.systemColors
     val primaryColors = AppTheme.primaryColors
+
     val borderColor = if (isSystemInDarkTheme()) {
         Brush.linearGradient(
             colors = listOf(
@@ -95,19 +96,19 @@ fun InputField(
         label = {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyLarge.copy(color = color.textSecondary)
+                style = MaterialTheme.typography.bodyLarge.copy(color = color.textPrimary.copy(0.5f))
             )
         },
         placeholder = {
             if (showStringPlaceholder) {
                 Text(
                     text = placeholder,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = fontSize, color = color.textPrimary.copy(0.4f)),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = fontSize, color = color.textPrimary.copy(0.5f)),
                 )
             } else {
                 Text(
                     text = placeholder,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = fontSize, color = color.textPrimary.copy(0.4f)),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = fontSize, color = color.textPrimary.copy(0.5f)),
                 )
             }
 

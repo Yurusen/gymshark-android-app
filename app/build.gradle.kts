@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview) // UI Preview tooling
     implementation(libs.androidx.compose.material3) // Material3 components
     implementation(libs.androidx.compose.foundation.layout)
+    implementation("androidx.compose.foundation:foundation:1.6.0") // Sticky header
     implementation(libs.androidx.ui.graphics) // Compose layouts
     debugImplementation(libs.androidx.compose.ui.tooling) // UI tooling for debugging
     debugImplementation(libs.androidx.compose.ui.test.manifest) // Test manifest

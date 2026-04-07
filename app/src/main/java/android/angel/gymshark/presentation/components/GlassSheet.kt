@@ -1,5 +1,6 @@
 package android.angel.gymshark.presentation.components
 
+import android.angel.gymshark.core.utils.LocalGlassBackground
 import android.angel.gymshark.core.utils.LocalHazeState
 import android.angel.gymshark.ui.theme.AppTheme
 import androidx.compose.animation.core.Animatable
@@ -49,20 +50,6 @@ fun GlassSheet(
     val sheetHeightPx = with(LocalDensity.current) { sheetHeight.toPx() }
     var offsetY = remember { Animatable(sheetHeightPx) }
     val overlayAlpha = remember { Animatable(0f) }
-    val backgroundBrush: Brush = Brush.linearGradient(
-        colors = listOf(
-            Color.White.copy(alpha = 0.25f),
-            Color.White.copy(alpha = 0.10f),
-            Color.White.copy(alpha = 0.05f)
-        )
-    )
-
-    val border: Brush = Brush.linearGradient(
-        colors = listOf(
-            Color.White.copy(alpha = 0.1f),
-            Color.White.copy(alpha = 0.4f)
-        )
-    )
 
     LaunchedEffect(isVisible) {
         if (isVisible) {
@@ -127,7 +114,7 @@ fun GlassSheet(
                     .align(Alignment.BottomCenter)
                     .offset { IntOffset(0, offsetY.value.roundToInt()) }
                     .background(
-                        brush = backgroundBrush,
+                        brush = LocalGlassBackground,
                         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
                     )
                     .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))

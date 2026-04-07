@@ -116,7 +116,7 @@ fun LoginScreen(
                                 .clickable { email = "" },
                             painter = painterResource(id = R.drawable.cross),
                             contentDescription = "Clear Password",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                     }
                 },
@@ -140,7 +140,7 @@ fun LoginScreen(
                                 },
                             painter = painterResource(id = if (passwordVisible) R.drawable.password_visible else R.drawable.password),
                             contentDescription = "Show Password",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                         Icon(
                             modifier = Modifier
@@ -148,7 +148,7 @@ fun LoginScreen(
                                 .clickable { password = "" },
                             painter = painterResource(id = R.drawable.cross),
                             contentDescription = "Clear Password",
-                            tint = AppTheme.systemColors.textSecondary
+                            tint = AppTheme.systemColors.textPrimary
                         )
                     }
                 },
@@ -168,8 +168,11 @@ fun LoginScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 title = "log in",
                 onClick = {
-                    viewModel.updateShowLoginScreen(!viewModel.showLoginScreen)
-                    navController.navigate("dashboard")
+                    scope.launch {
+                        viewModel.updateShowLoginScreen(!viewModel.showLoginScreen)
+//                        delay(600)
+                        navController.navigate("dashboard")
+                    }
                 })
 
             Row(

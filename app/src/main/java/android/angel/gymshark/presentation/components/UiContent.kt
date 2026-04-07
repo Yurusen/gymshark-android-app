@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun UiContent(
+    modifier: Modifier = Modifier,
     isRefreshing: Boolean,
     onRefresh: suspend () -> Unit,
     content: @Composable () -> Unit
@@ -57,6 +58,7 @@ fun UiContent(
                 Box(
                     modifier = Modifier
                         .background(color = Color.Transparent)
+                        .then(modifier)
                 ) {
                         content()
                 }

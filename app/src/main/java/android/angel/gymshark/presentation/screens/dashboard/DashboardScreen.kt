@@ -1,5 +1,6 @@
 package android.angel.gymshark.presentation.screens.dashboard
 
+import android.angel.gymshark.core.utils.LocalGlassBackground
 import android.angel.gymshark.core.utils.LocalLoggedInHazeState
 import android.angel.gymshark.presentation.components.InputField
 import android.angel.gymshark.presentation.components.UiContent
@@ -8,7 +9,11 @@ import android.angel.gymshark.presentation.components.buttons.CoreButton
 import android.angel.gymshark.ui.theme.AppTheme
 import android.graphics.ImageDecoder
 import android.os.Build
-import android.widget.ImageButton
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +36,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -38,10 +44,14 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,10 +71,11 @@ import com.prototype.gymshark.R
 import dev.chrisbanes.haze.hazeChild
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 
 @Composable
 fun DashboardScreen() {
-    val interactionSource = remember { MutableInteractionSource() }
     var isRefreshing by remember { mutableStateOf(false) }
     var refreshTrigger by remember { mutableStateOf(0) }
     val selectedItem by remember { mutableStateOf(0) }
@@ -78,43 +89,75 @@ fun DashboardScreen() {
         }
     }.build()
 
+    DisposableEffect(Unit) {
+        onDispose {
+        }
+    }
+
+    val listState = rememberLazyListState()
+    var lastScrollOffset by remember { mutableStateOf(0) }
+    val showHeader = remember {
+        mutableStateOf(true)
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemScrollOffset }
+            .collect { currentOffset ->
+                if (currentOffset == 0 && lastScrollOffset == 0) {
+                    showHeader.value = true
+                } else {
+                    showHeader.value = currentOffset < lastScrollOffset
+                }
+                lastScrollOffset = currentOffset
+            }
+    }
+
+    val dashboardHazeState = remember { HazeState() }
+
     UiContent(isRefreshing = isRefreshing, onRefresh = { }) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            state = listState,
+            modifier = Modifier.fillMaxSize().haze(dashboardHazeState, backgroundColor = Color.Transparent, blurRadius = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    InputField(
-                        modifier = Modifier.padding(horizontal = 6.dp),
-                        value = searchInput,
-                        onValueChange = { input ->
-                            searchInput = input
-                        },
-                        label = "what are you looking for?",
-                        placeholder = "what are you looking for?",
-                        trailingIcon = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    modifier = Modifier
-                                        .padding(end = 19.dp)
-                                        .clickable {
 
-                                        },
-                                    painter = painterResource(R.drawable.search_icon),
-                                    contentDescription = "Clear Input",
-                                    tint = AppTheme.systemColors.textSecondary
-                                )
+            stickyHeader {
+                AnimatedVisibility(
+                    visible = showHeader.value,
+                    enter = fadeIn() + slideInVertically(),
+                    exit = fadeOut() + slideOutVertically()
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        InputField(
+                            modifier = Modifier.padding(horizontal = 6.dp),
+                            value = searchInput,
+                            onValueChange = { searchInput = it },
+                            label = "what are you looking for?",
+                            placeholder = "what are you looking for?",
+                            trailingIcon = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(end = 19.dp)
+                                            .clickable { /* handle click */ },
+                                        painter = painterResource(R.drawable.search_icon),
+                                        contentDescription = "Clear Input",
+                                        tint = AppTheme.systemColors.textPrimary
+                                    )
+                                }
                             }
-                        })
+                        )
+                    }
                 }
-
             }
+
+
             item {
                 Row(
                     modifier = Modifier
                         .wrapContentHeight()
+                        .background(brush = LocalGlassBackground)
                         .fillMaxWidth()
                         .hazeChild(LocalLoggedInHazeState.current),
                     verticalAlignment = Alignment.CenterVertically,
@@ -226,7 +269,8 @@ fun DashboardScreen() {
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .hazeChild(LocalLoggedInHazeState.current)
+                        .background(brush = LocalGlassBackground)
+                        .hazeChild(LocalLoggedInHazeState.current),
                 ) {
                     items(items) { item ->
                         Column(
@@ -242,7 +286,7 @@ fun DashboardScreen() {
                                     modifier = Modifier
                                         .height(320.dp)
                                         .clickable(
-                                            interactionSource = interactionSource,
+                                            interactionSource = remember { MutableInteractionSource() },
                                             indication = ripple(
                                                 bounded = true, radius = 160.dp
                                             )
@@ -372,26 +416,32 @@ fun DashboardScreen() {
                         .fillMaxWidth()
                         .padding(6.dp)
                 ) {
-                    // 1st Row
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp), // total height of row
+                            .height(300.dp),
                         horizontalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
-                        // Large item
                         Image(
                             painter = painterResource(shortsItems[0]),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .weight(1f)
-                                .fillMaxHeight() // height = row height
+                                .fillMaxHeight()
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = ripple(
+                                        bounded = true, radius = 150.dp
+                                    )
+                                ) {
+
+                                }
                         )
 
                         Column(
                             modifier = Modifier
-                                .weight(1f / 2.05f) // small column relative to large image
+                                .weight(1f / 2.05f)
                                 .fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(3.dp)
                         ) {
                             Image(
@@ -401,6 +451,14 @@ fun DashboardScreen() {
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxWidth()
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = ripple(
+                                            bounded = true, radius = 75.dp
+                                        )
+                                    ) {
+
+                                    }
                             )
 
                             Image(
@@ -410,15 +468,22 @@ fun DashboardScreen() {
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxWidth()
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = ripple(
+                                            bounded = true, radius = 75.dp
+                                        )
+                                    ) {
+
+                                    }
                             )
                         }
                     }
 
-                    // 2nd Row
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(150.dp), // same as 2 smaller images
+                            .height(150.dp),
                         horizontalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
                         repeat(3) { index ->
@@ -429,6 +494,14 @@ fun DashboardScreen() {
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxHeight()
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = ripple(
+                                            bounded = true, radius = 75.dp
+                                        )
+                                    ) {
+
+                                    }
                             )
                         }
                     }

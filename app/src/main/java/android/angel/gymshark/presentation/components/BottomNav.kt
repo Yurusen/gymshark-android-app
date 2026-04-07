@@ -1,6 +1,8 @@
 package android.angel.gymshark.presentation.components
 
 import android.angel.gymshark.core.utils.LocalLoggedInHazeState
+import android.angel.gymshark.presentation.navigation.DashboardRoutes
+import android.angel.gymshark.presentation.navigation.ShopRoutes
 import android.angel.gymshark.ui.theme.AppTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,7 +53,7 @@ sealed class BottomNav(val route: String, val title: String, val icon: Int) {
     )
 
     object Profile : BottomNav(
-        route = "profilt", title = "PROFILE", icon = R.drawable.profile_icon
+        route = "profile", title = "PROFILE", icon = R.drawable.profile_icon
     )
 }
 
@@ -70,18 +72,10 @@ fun BottomNav(
     val currentBackstackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = currentBackstackEntry.value?.destination?.route
 
-    val selectedItem = remember(currentRoute) {
+    val selectedItem =
         items.indexOfFirst { item ->
-            when {
-                item.route == BottomNav.Home.route -> true
-                item.route == BottomNav.Shop.route -> true
-                item.route == BottomNav.Basket.route -> true
-                item.route == BottomNav.WishList.route -> true
-                item.route == BottomNav.Profile.route -> true
-                else -> false
-            }
+               currentRoute?.startsWith(item.route) == true
         }.coerceAtLeast(0)
-    }
 
     val backgroundBrush: Brush = Brush.linearGradient(
         colors = listOf(
@@ -117,7 +111,10 @@ fun BottomNav(
         ) {
             items.forEachIndexed { index, item ->
                 IconButton(
-                    onClick = {}, modifier = Modifier
+                    onClick = {
+                        selectedItem == index
+                        navController.navigate(item.route)
+                    }, modifier = Modifier
                         .fillMaxSize()
                         .weight(1f)
                 ) {
